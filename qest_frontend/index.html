@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QestBot - Your Legal Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: linear-gradient(to bottom, #f0f4f8, #ffffff);
+        }
+        .message {
+            max-width: 70%;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .user-message {
+            background-color: #1e3a8a;
+            color: white;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #10b981;
+            color: white;
+            margin-right: auto;
+        }
+        .response-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .list-item {
+            margin-left: 20px;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 18px;
+        }
+        #loading.active {
+            display: block;
+        }
+        #input-form {
+            display: flex;
+            padding: 10px;
+            background-color: white;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+        #input-form textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            font-size: 16px; /* Increased font size */
+            transition: all 0.3s ease; /* Smooth transition for highlight effect */
+        }
+        #input-form textarea:focus {
+            outline: none; /* Remove default outline */
+            border-color: #1e3a8a; /* Highlight with blue border */
+            background-color: #e6f0fa; /* Light blue background while typing */
+            box-shadow: 0 0 5px rgba(30, 58, 138, 0.5); /* Subtle shadow for emphasis */
+        }
+        #input-form button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #input-form button:hover {
+            background-color: #1e3a8a;
+        }
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>QestBot - Your Legal Assistant</header>
+    <div id="chat-container"></div>
+    <div id="loading">Loading...</div>
+    <form id="input-form">
+        <textarea id="user-input" placeholder="Ask your legal question..." rows="1"></textarea>
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const loading = document.getElementById('loading');
+        const userInput = document.getElementById('user-input');
+        const inputForm = document.getElementById('input-form');
+
+        // Function to add message to chat
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role === 'user' ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = content; // Use innerHTML to support formatted lists
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Function to add labeled bot response
+        function addLabeledBotResponse(label, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            
+            const labelSpan = document.createElement('span');
+            labelSpan.className = 'response-label';
+            labelSpan.textContent = label;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.innerHTML = formatListItems(content); // Format content with bullet points
+            
+            messageDiv.appendChild(labelSpan);
+            messageDiv.appendChild(contentDiv);
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Function to format numbered list into bullet points
+        function formatListItems(content) {
+            const lines = content.split('\n');
+            let formattedContent = '';
+            let inList = false;
+
+            lines.forEach(line => {
+                line = line.trim();
+                if (line.match(/^\d+\.\s+.+/)) { // Detect lines starting with "number. "
+                    if (!inList) {
+                        formattedContent += '<ul>';
+                        inList = true;
+                    }
+                    const listItem = line.replace(/^\d+\.\s+/, '');
+                    formattedContent += `<li>${listItem}</li>`;
+                } else {
+                    if (inList) {
+                        formattedContent += '</ul>';
+                        inList = false;
+                    }
+                    if (line) {
+                        formattedContent += `<p>${line}</p>`;
+                    }
+                }
+            });
+
+            if (inList) {
+                formattedContent += '</ul>';
+            }
+
+            return formattedContent || content; // Return original if no list detected
+        }
+
+        // Handle greeting messages
+        const greetings = ['hi', 'hello', 'hiii', 'hii', 'helloo','Hi','Hello','Hiii','Hii','Helloo','hey','Hey','Heyy','heyy','Hi!','Hello!','Hiii!','Hii!','Helloo!','hey!','Hey!','Heyy!','heyy!'];
+        function handleGreeting(input) {
+            const isGreeting = greetings.includes(input.trim());
+            if (isGreeting) {
+                addMessage('user', input);
+                addMessage('assistant', 'Hello, I am QestBot! I can help with legal queries.');
+                return true;
+            }
+            return false;
+        }
+
+        // Handle API call
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const input = userInput.value.trim();
+            if (!input) return;
+
+            if (handleGreeting(input)) {
+                userInput.value = '';
+                return;
+            }
+
+            addMessage('user', input);
+            userInput.value = '';
+
+            loading.classList.add('active');
+
+            try {
+                const response = await fetch('https://qestfinal.azurewebsites.net/api/qestfinal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: input }),
+                });
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log('API Response:', data); // Debug log
+
+                if (data.query_response && data.summarize_response && data.final_response) {
+                    addLabeledBotResponse('Query Agent Response:', data.query_response);
+                    addLabeledBotResponse('Summarize Agent Response:', data.summarize_response);
+                    addLabeledBotResponse('Final Response:', data.final_response);
+                } else if (data.final_response) {
+                    addMessage('assistant', formatListItems(data.final_response)); // Format final_response for lists
+                } else {
+                    addMessage('assistant', 'Sorry, no valid response received.');
+                }
+            } catch (error) {
+                addMessage('assistant', 'Sorry, something went wrong. Please try again later.');
+                console.error('Error:', error);
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        // Initial welcome message
+        if (chatContainer.children.length === 0) {
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'welcome-message';
+            welcomeDiv.textContent = 'Hello! I am QestBot. Ask me any legal question to get started.';
+            chatContainer.appendChild(welcomeDiv);
+        }
+
+        // Event listeners
+        inputForm.addEventListener('submit', handleSubmit);
+        userInput.addEventListener('input', () => {
+            userInput.style.height = 'auto';
+            userInput.style.height = `${Math.min(userInput.scrollHeight, 100)}px`;
+        });
+        userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Prevent adding a new line
+                inputForm.dispatchEvent(new Event('submit')); // Trigger form submission
+            }
+        });
+    </script>
+</body>
+</html>
