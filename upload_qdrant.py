@@ -90,9 +90,9 @@
 # # Main execution
 # def main():
 #     input_embeddings_file = 'embeddings.json'  # Hardcoded input file path
-#     api_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.UGN42H_g9n7ieQLdB-DI8Awg_LL26nLGDxkC6f1JIEM"  # Provided API key
+#     api_key = "Api"  # Provided API key
 #     # Replace the cluster_url with the URL from your Qdrant Cloud dashboard after creating the cluster
-#     cluster_url = "https://dbc8fef8-478c-4529-ae46-20e4590e845d.europe-west3-0.gcp.cloud.qdrant.io"  # Placeholder, update this
+#     cluster_url = "url"  # Placeholder, update this
 #     collection_name = "qest"  # Hardcoded collection name
 
 #     if not os.path.exists(input_embeddings_file):
@@ -213,8 +213,8 @@ def upload_to_qdrant(embeddings_file, api_key, cluster_url, collection_name="qes
 # Main execution
 def main():
     input_embeddings_file = 'embeddings.json'  # Hardcoded input file path
-    api_key = os.environ.get('QDRANT_API_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.UGN42H_g9n7ieQLdB-DI8Awg_LL26nLGDxkC6f1JIEM')  # Use environment variable for API key
-    cluster_url = os.environ.get('QDRANT_CLUSTER_URL', 'https://dbc8fef8-478c-4529-ae46-20e4590e845d.europe-west3-0.gcp.cloud.qdrant.io')  # Use environment variable for cluster URL
+    api_key = os.environ.get('QDRANT_API_KEY', 'Api')  # Use environment variable for API key
+    cluster_url = os.environ.get('QDRANT_CLUSTER_URL', 'url')  # Use environment variable for cluster URL
     collection_name = "qest"  # Hardcoded collection name
 
     if not os.path.exists(input_embeddings_file):
