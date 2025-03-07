@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 # Azure OpenAI configuration
 client = AzureOpenAI(
-    api_key=os.environ.get('AZURE_OPENAI_API_KEY', '66a17c14b08a493a8ee71f8ec9d100ef'),
+    api_key=os.environ.get('AZURE_OPENAI_API_KEY', 'Key'),
     api_version=os.environ.get('API_VERSION', '2024-02-01'),
-    azure_endpoint=os.environ.get('AZURE_OPENAI_ENDPOINT', 'https://30-may-vision-8.openai.azure.com/')
+    azure_endpoint=os.environ.get('AZURE_OPENAI_ENDPOINT', 'endpoint')
 )
 
 # Query Agent API endpoint
