@@ -6,8 +6,8 @@ from openai import AzureOpenAI
 
 # Initialize Qdrant client
 qdrant_client = QdrantClient(
-    url=os.environ.get('QDRANT_CLUSTER_URL', 'https://dbc8fef8-478c-4529-ae46-20e4590e845d.europe-west3-0.gcp.cloud.qdrant.io'),
-    api_key=os.environ.get('QDRANT_API_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.UGN42H_g9n7ieQLdB-DI8Awg_LL26nLGDxkC6f1JIEM')
+    url=os.environ.get('QDRANT_CLUSTER_URL', 'url'),
+    api_key=os.environ.get('QDRANT_API_KEY', 'key')
 )
 
 # Initialize the embedding model (same as used for creating document vectors)
@@ -15,9 +15,9 @@ embedding_model = SentenceTransformer('static-retrieval-mrl-en-v1')
 
 # Initialize Azure OpenAI client
 client = AzureOpenAI(
-    api_key=os.environ.get('AZURE_OPENAI_API_KEY', '66a17c14b08a493a8ee71f8ec9d100ef'),
+    api_key=os.environ.get('AZURE_OPENAI_API_KEY', 'key'),
     api_version=os.environ.get('API_VERSION', '2024-02-01'),
-    azure_endpoint=os.environ.get('AZURE_OPENAI_ENDPOINT', 'https://30-may-vision-8.openai.azure.com/')
+    azure_endpoint=os.environ.get('AZURE_OPENAI_ENDPOINT', 'endpoint')
 )
 
 # Collection name
